@@ -1,0 +1,81 @@
+---
+title: "Problem Set 2"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+library(data.table)
+library(assertthat)
+```
+
+
+# 1. FE Excercise 3.6
+
+The Clingingsmith, Khwaja, and Kremer study discussed in section 3.5 may be be used to test the sharp null hypothesis that winning the visa lottery for the pilgrimage to Mecca had no effect on the views of Pakistani Muslims toward people from other countries. Assume that the Pakistani authorities assigned visas using complete random assignment.
+
+
+```{r}
+# helper function to load data
+load.clsm <- function (f) {
+    pth <- "data/raw/ps2/"
+    fpth <- paste(pth,f,sep="")
+    dt <- read_csv(fpth)
+    
+    # add a rowid to help uniquely identify each respondent
+    dt <- dt %>% rowid_to_column("ID")
+    
+    return(dt)   
+}
+clsm <- load.clsm("Clingingsmith.2009.csv")
+
+
+```
+
+Each row of data represents a single respondent. The view_xyz fields are the changes in the views of the respondent towards peoples from other countries.
+
+```{r}
+clsm %>% head()
+
+# checks that we loaded the right csv
+assert_that(clsm %>% count() == 958)
+
+# checks that the views columns is the rowSum of the other views columns
+temp <- clsm %>% 
+            mutate(check = rowSums(select(clsm, starts_with("views_")))) %>% 
+            select(ID, views, check) %>%
+            filter(views != check) %>% 
+            count()
+assert_that(
+    temp == 0
+)
+
+```
+
+
+## 1.a.
+
+Conduct 10,000 simulated random assignments under the sharp null hypothesis
+
+Under sharp null hypothesis, we can assume that the assignment to treatment has zero treatment effect on any of the units of treatment. So, we don't have to change the values of the views in either the potential outcome to treatment, D==1, or the potential outcome to control, D==0.
+
+We are using simple random assignment, so basically flipping a fair coin to determine if a respondent is assigned to treatment (got visa) or control (did not get visa).
+
+<!-- We are also just using the "views" variable, instead of checking each, since it represents the total change in each respondent's views toward people from other countries. -->
+
+
+```{r}
+# helper function that, when given the clsm data, runs a single experiment
+set.seed(232354)
+
+sim.experiment <- function (dt) {
+    dt <- clsm
+    dt <- dt %>% 
+        select(ID, starts_with("view")) %>% 
+        mutate(D = rbinom(nrow(dt),1,.5))
+    return(dt)
+}
+temp <- sim.experiment(clsm)
+```
+
