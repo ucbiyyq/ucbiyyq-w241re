@@ -1701,18 +1701,11 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShhc3NlcnR0aGF0KVxuXG5gYGAifQ== -->
-<pre class="r"><code>library(assertthat)
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeSh0aWR5dmVyc2UpXG5saWJyYXJ5KGRhdGEudGFibGUpXG5saWJyYXJ5KGFzc2VydHRoYXQpXG5gYGAifQ== -->
+<pre class="r"><code>library(tidyverse)
+library(data.table)
+library(assertthat)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiXG5BdHRhY2hpbmcgcGFja2FnZTog4oCYYXNzZXJ0dGhhdOKAmVxuXG5UaGUgZm9sbG93aW5nIG9iamVjdCBpcyBtYXNrZWQgZnJvbSDigJhwYWNrYWdlOnRpYmJsZeKAmTpcblxuICAgIGhhc19uYW1lXG4ifQ== -->
-<pre><code>
-Attaching package: ‘assertthat’
-
-The following object is masked from ‘package:tibble’:
-
-    has_name</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="fe-excercise-3.6" class="section level1">
@@ -1720,12 +1713,11 @@ The following object is masked from ‘package:tibble’:
 <p>The Clingingsmith, Khwaja, and Kremer study discussed in section 3.5 may be be used to test the sharp null hypothesis that winning the visa lottery for the pilgrimage to Mecca had no effect on the views of Pakistani Muslims toward people from other countries. Assume that the Pakistani authorities assigned visas using complete random assignment.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBoZWxwZXIgZnVuY3Rpb24gdG8gbG9hZCBkYXRhXG5sb2FkLmNsc20gPC0gZnVuY3Rpb24gKGYpIHtcbiAgICBwdGggPC0gXCJkYXRhL3Jhdy9wczIvXCJcbiAgICBmcHRoIDwtIHBhc3RlKHB0aCxmLHNlcD1cIlwiKVxuICAgICMgZHQgPC0gcmVhZC5jc3YoZnB0aCkgJT4lIGFzLmRhdGEudGFibGUoKVxuICAgIGR0IDwtIHJlYWRfY3N2KGZwdGgpXG4gICAgXG4gICAgIyBhZGQgYSByb3dpZCB0byBoZWxwIHVuaXF1ZWx5IGlkZW50aWZ5IGVhY2ggcmVzcG9uZGVudFxuICAgIGR0IDwtIGR0ICU+JSByb3dpZF90b19jb2x1bW4oXCJJRFwiKVxuICAgIFxuICAgIHJldHVybihkdCkgICBcbn1cbmNsc20gPC0gbG9hZC5jbHNtKFwiQ2xpbmdpbmdzbWl0aC4yMDA5LmNzdlwiKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBoZWxwZXIgZnVuY3Rpb24gdG8gbG9hZCBkYXRhXG5sb2FkLmNsc20gPC0gZnVuY3Rpb24gKGYpIHtcbiAgICBwdGggPC0gXCJkYXRhL3Jhdy9wczIvXCJcbiAgICBmcHRoIDwtIHBhc3RlKHB0aCxmLHNlcD1cIlwiKVxuICAgIGR0IDwtIHJlYWRfY3N2KGZwdGgpXG4gICAgXG4gICAgIyBhZGQgYSByb3dpZCB0byBoZWxwIHVuaXF1ZWx5IGlkZW50aWZ5IGVhY2ggcmVzcG9uZGVudFxuICAgIGR0IDwtIGR0ICU+JSByb3dpZF90b19jb2x1bW4oXCJJRFwiKVxuICAgIFxuICAgIHJldHVybihkdCkgICBcbn1cbmNsc20gPC0gbG9hZC5jbHNtKFwiQ2xpbmdpbmdzbWl0aC4yMDA5LmNzdlwiKVxuYGBgIn0= -->
 <pre class="r"><code># helper function to load data
 load.clsm &lt;- function (f) {
     pth &lt;- &quot;data/raw/ps2/&quot;
     fpth &lt;- paste(pth,f,sep=&quot;&quot;)
-    # dt &lt;- read.csv(fpth) %&gt;% as.data.table()
     dt &lt;- read_csv(fpth)
     
     # add a rowid to help uniquely identify each respondent
@@ -1756,7 +1748,7 @@ cols(
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xzbSAlPiUgaGVhZCgpXG5gYGAifQ== -->
 <pre class="r"><code>clsm %&gt;% head()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6OSwibnJvdyI6Nn0sInJkZiI6IlVrUllNZ3BZQ2dBQUFBSUFBd1VBQUFJREFBQUFCQUlBQUFBQkFBUUFDUUFBQUFGNEFBQURFd0FBQUFrQUFBQU5BQUFBQmdBQUFBRUFBQUFDQUFBQUF3QUFBQVFBQUFBRkFBQUFCZ0FBQUEwQUFBQUdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFEUUFBQUFZQUFBQUJBQUFBQVFBQUFBQUFBQUFDQUFBQUFRQUFBQUlBQUFBTkFBQUFCZ0FBQUFFQUFBQUJBQUFBQUFBQUFBSUFBQUFCQUFBQUFBQUFBQTBBQUFBR0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBRUFBQUFBQUFBQURRQUFBQVlBQUFBQS8vLy8vd0FBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFOQUFBQUJnQUFBQUFBQUFBQkFBQUFBQUFBQUFFQUFBQUJBQUFBQUFBQUFBMEFBQUFHQUFBQUFQLy8vLzhBQUFBQUFBQUFBUC8vLy80QUFBQUFBQUFBRFFBQUFBWUFBQUFDQUFBQUFRQUFBQUFBQUFBRkFBQUFBd0FBQUFJQUFBUUNBQUFBQVFBRUFBa0FBQUFGWTJ4aGMzTUFBQUFRQUFBQUFRQUVBQWtBQUFBS1pHRjBZUzVtY21GdFpRQUFCQUlBQUFBQkFBUUFDUUFBQUFWdVlXMWxjd0FBQUJBQUFBQUpBQVFBQ1FBQUFBSkpSQUFFQUFrQUFBQUhjM1ZqWTJWemN3QUVBQWtBQUFBTGRtbGxkM05mYzJGMVpHa0FCQUFKQUFBQUVIWnBaWGR6WDJsdVpHOXVaWE5wWVc0QUJBQUpBQUFBRFhacFpYZHpYM1IxY210cGMyZ0FCQUFKQUFBQURYWnBaWGR6WDJGbWNtbGpZVzRBQkFBSkFBQUFEWFpwWlhkelgyTm9hVzVsYzJVQUJBQUpBQUFBRG5acFpYZHpYMlYxY205d1pXRnVBQVFBQ1FBQUFBVjJhV1YzY3dBQUJBSUFBQUFCQUFRQUNRQUFBQWx5YjNjdWJtRnRaWE1BQUFBTkFBQUFBb0FBQUFELy8vLzZBQUFBL2dBQUJBSUFBQUFCQUFRQUNRQUFBQWR2Y0hScGIyNXpBQUFDRXdBQUFBVUFBQUFRQUFBQUFRQUVBQWtBQUFBQmNnQUFBQkFBQUFBQkFBUUFDUUFBQUE5MWJtNWhiV1ZrTFdOb2RXNXJMVEVBQUFBS0FBQUFBUUFBQUFBQUFBQU5BQUFBQVFBQUFBWUFBQUFOQUFBQUFRQUFBQWtBQUFRQ0FBQUQvd0FBQUJBQUFBQUZBQVFBQ1FBQUFBWmxibWRwYm1VQUJBQUpBQUFBQld4aFltVnNBQVFBQ1FBQUFBNXliM2R1WVcxbGN5NXdjbWx1ZEFBRUFBa0FBQUFLY205M2N5NTBiM1JoYkFBRUFBa0FBQUFLWTI5c2N5NTBiM1JoYkFBQUFQNEFBQUQrIn0= -->
+<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibmNvbCI6OSwibnJvdyI6Nn0sInJkZiI6IlVrUllNZ3BZQ2dBQUFBSUFBd1VBQUFJREFBQUFCQUlBQUFBQkFBUUFDUUFBQUFGNEFBQURFd0FBQUFrQUFBQU5BQUFBQmdBQUFBRUFBQUFDQUFBQUF3QUFBQVFBQUFBRkFBQUFCZ0FBQUEwQUFBQUdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFEUUFBQUFZQUFBQUJBQUFBQVFBQUFBQUFBQUFDQUFBQUFRQUFBQUlBQUFBTkFBQUFCZ0FBQUFFQUFBQUJBQUFBQUFBQUFBSUFBQUFCQUFBQUFBQUFBQTBBQUFBR0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBRUFBQUFBQUFBQURRQUFBQVlBQUFBQS8vLy8vd0FBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFOQUFBQUJnQUFBQUFBQUFBQkFBQUFBQUFBQUFFQUFBQUJBQUFBQUFBQUFBMEFBQUFHQUFBQUFQLy8vLzhBQUFBQUFBQUFBUC8vLy80QUFBQUFBQUFBRFFBQUFBWUFBQUFDQUFBQUFRQUFBQUFBQUFBRkFBQUFBd0FBQUFJQUFBUUNBQUFBQVFBRUFBa0FBQUFGWTJ4aGMzTUFBQUFRQUFBQUFRQUVBQWtBQUFBS1pHRjBZUzVtY21GdFpRQUFCQUlBQUFBQkFBUUFDUUFBQUFWdVlXMWxjd0FBQUJBQUFBQUpBQVFBQ1FBQUFBSkpSQUFFQUFrQUFBQUhjM1ZqWTJWemN3QUVBQWtBQUFBTGRtbGxkM05mYzJGMVpHa0FCQUFKQUFBQUVIWnBaWGR6WDJsdVpHOXVaWE5wWVc0QUJBQUpBQUFBRFhacFpYZHpYM1IxY210cGMyZ0FCQUFKQUFBQURYWnBaWGR6WDJGbWNtbGpZVzRBQkFBSkFBQUFEWFpwWlhkelgyTm9hVzVsYzJVQUJBQUpBQUFBRG5acFpYZHpYMlYxY205d1pXRnVBQVFBQ1FBQUFBVjJhV1YzY3dBQUJBSUFBQUFCQUFRQUNRQUFBQWx5YjNjdWJtRnRaWE1BQUFBTkFBQUFBb0FBQUFELy8vLzZBQUFBL2dBQUJBSUFBQUFCQUFRQUNRQUFBQWR2Y0hScGIyNXpBQUFDRXdBQUFBVUFBQUFRQUFBQUFRQUVBQWtBQUFBQmNnQUFBQkFBQUFBQkFBUUFDUUFBQUE5MWJtNWhiV1ZrTFdOb2RXNXJMVE1BQUFBS0FBQUFBUUFBQUFBQUFBQU5BQUFBQVFBQUFBWUFBQUFOQUFBQUFRQUFBQWtBQUFRQ0FBQUQvd0FBQUJBQUFBQUZBQVFBQ1FBQUFBWmxibWRwYm1VQUJBQUpBQUFBQld4aFltVnNBQVFBQ1FBQUFBNXliM2R1WVcxbGN5NXdjbWx1ZEFBRUFBa0FBQUFLY205M2N5NTBiM1JoYkFBRUFBa0FBQUFLWTI5c2N5NTBiM1JoYkFBQUFQNEFBQUQrIn0= -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["ID"],"name":[1],"type":["int"],"align":["right"]},{"label":["success"],"name":[2],"type":["int"],"align":["right"]},{"label":["views_saudi"],"name":[3],"type":["int"],"align":["right"]},{"label":["views_indonesian"],"name":[4],"type":["int"],"align":["right"]},{"label":["views_turkish"],"name":[5],"type":["int"],"align":["right"]},{"label":["views_african"],"name":[6],"type":["int"],"align":["right"]},{"label":["views_chinese"],"name":[7],"type":["int"],"align":["right"]},{"label":["views_european"],"name":[8],"type":["int"],"align":["right"]},{"label":["views"],"name":[9],"type":["int"],"align":["right"]}],"data":[{"1":"1","2":"0","3":"1","4":"1","5":"0","6":"0","7":"0","8":"0","9":"2"},{"1":"2","2":"0","3":"1","4":"1","5":"0","6":"-1","7":"1","8":"-1","9":"1"},{"1":"3","2":"0","3":"0","4":"0","5":"0","6":"0","7":"0","8":"0","9":"0"},{"1":"4","2":"0","3":"2","4":"2","5":"0","6":"0","7":"1","8":"0","9":"5"},{"1":"5","2":"0","3":"1","4":"1","5":"1","6":"1","7":"1","8":"-2","9":"3"},{"1":"6","2":"0","3":"2","4":"0","5":"0","6":"0","7":"0","8":"0","9":"2"}],"options":{"columns":{"min":{},"max":[10],"total":[9]},"rows":{"min":[10],"max":[10],"total":[6]},"pages":{}}}
@@ -1792,29 +1784,66 @@ assert_that(
 <p>Conduct 10,000 simulated random assignments under the sharp null hypothesis</p>
 <p>Under sharp null hypothesis, we can assume that the assignment to treatment has zero treatment effect on any of the units of treatment. So, we don’t have to change the values of the views in either the potential outcome to treatment, D==1, or the potential outcome to control, D==0.</p>
 <p>We are using simple random assignment, so basically flipping a fair coin to determine if a respondent is assigned to treatment (got visa) or control (did not get visa).</p>
-<!-- We are also just using the "views" variable, instead of checking each, since it represents the total change in each respondent's views toward people from other countries. -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBoZWxwZXIgZnVuY3Rpb24gdGhhdCwgd2hlbiBnaXZlbiB0aGUgY2xzbSBkYXRhLCBydW5zIGEgc2luZ2xlIGV4cGVyaW1lbnRcbnNldC5zZWVkKDIzMjM1NClcblxuc2ltLmV4cGVyaW1lbnQgPC0gZnVuY3Rpb24gKGR0KSB7XG4gICAgZHQgPC0gY2xzbVxuICAgIGR0IDwtIGR0ICU+JSBcbiAgICAgICAgc2VsZWN0KElELCBzdGFydHNfd2l0aChcInZpZXdcIikpICU+JSBcbiAgICAgICAgbXV0YXRlKEQgPSByYmlub20obnJvdyhkdCksMSwuNSkpXG4gICAgcmV0dXJuKGR0KVxufVxudGVtcCA8LSBzaW0uZXhwZXJpbWVudChjbHNtKVxuYGBgIn0= -->
-<pre class="r"><code># helper function that, when given the clsm data, runs a single experiment
-set.seed(232354)
-
-sim.experiment &lt;- function (dt) {
-    dt &lt;- clsm
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB3aGVuIGdpdmVuIHRoZSBjbHNtIGRhdGEsIGNhbGN1bGF0ZXMgdGhlIEFURSBmb3IgZXZlcnkgdmlld1xuY2FsYy5jbHNtLmF0ZXMgPC0gZnVuY3Rpb24gKGR0KSB7XG4gICAgZHQgPC0gZHQgJT4lIFxuICAgICAgICBzZWxlY3Qoc3VjY2Vzcywgc3RhcnRzX3dpdGgoXCJ2aWV3XCIpKSAlPiUgXG4gICAgICAgIGdyb3VwX2J5KHN1Y2Nlc3MpICU+JSBcbiAgICAgICAgc3VtbWFyaXplX2FsbChmdW5zKG1lYW4pKVxuXG4gICAgZHQgPC0gZHQgJT4lIFxuICAgICAgICBnYXRoZXIoc3RhcnRzX3dpdGgoXCJ2aWV3c1wiKSwga2V5ID0gXCJ2d1wiLCB2YWx1ZSA9IFwidmFsXCIpICU+JSBcbiAgICAgICAgc3ByZWFkKGtleSA9IHN1Y2Nlc3MsIHZhbHVlID0gdmFsKVxuICAgIFxuICAgIGR0IDwtIGR0ICU+JSBcbiAgICAgICAgbXV0YXRlKGF0ZSA9IGAxYCAtIGAwYCkgJT4lIFxuICAgICAgICBzZWxlY3QodncsIGF0ZSlcbiAgICBcbiAgICByZXR1cm4oZHQpXG59XG5jbHNtLmF0ZXMgPC0gY2FsYy5jbHNtLmF0ZXMoY2xzbSlcbmBgYCJ9 -->
+<pre class="r"><code># when given the clsm data, calculates the ATE for every view
+calc.clsm.ates &lt;- function (dt) {
     dt &lt;- dt %&gt;% 
-        select(ID, starts_with(&quot;view&quot;)) %&gt;% 
-        mutate(D = rbinom(nrow(dt),1,.5))
+        select(success, starts_with(&quot;view&quot;)) %&gt;% 
+        group_by(success) %&gt;% 
+        summarize_all(funs(mean))
+
+    dt &lt;- dt %&gt;% 
+        gather(starts_with(&quot;views&quot;), key = &quot;vw&quot;, value = &quot;val&quot;) %&gt;% 
+        spread(key = success, value = val)
+    
+    dt &lt;- dt %&gt;% 
+        mutate(ate = `1` - `0`) %&gt;% 
+        select(vw, ate)
+    
     return(dt)
 }
-temp &lt;- sim.experiment(clsm)</code></pre>
+clsm.ates &lt;- calc.clsm.ates(clsm)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHQgPC0gY2xzbVxuICAgIG4gPC0gNVxuICAgIHNldC5zZWVkKDIzMjM1NClcblxuICAgICMgY3JlYXRlcyBhIG5lc3RlZCB0YWJsZSBvZiBjbHNtIGRhdGEsIG9uZSByb3cgcGVyIHNpbSAgICBcbiAgICBkdCA8LSBkdCAlPiUgXG4gICAgICAgIHNlbGVjdChzdWNjZXNzLCBzdGFydHNfd2l0aChcInZpZXdzXCIpKVxuICAgIFxuICAgIHNpbXMgPC0gc2VxKDEsbiwxKSAlPiUgXG4gICAgICAgIHRpYmJsZSgpICU+JSBcbiAgICAgICAgc2V0X25hbWVzKG5tID0gXCJzaW0uaWRcIilcbiAgICBcbiAgICBzaW1zIDwtIHNpbXMgJT4lIFxuICAgICAgICBjcm9zc2luZyhkdCkgJT4lIFxuICAgICAgICBuZXN0KC1zaW0uaWQsIC5rZXk9XCJjbHNtLmRhdGFcIilcbiAgICBcbiAgICAjIHJ1bnMgZWFjaCBzaW0gdGhyb3VnaCB0aGUgYXRlIGNhbGN1bGF0aW9uc1xuICAgIHJlcyA8LSBzaW1zICU+JVxuICAgICAgICBncm91cF9ieShzaW0uaWQpICU+JSBcbiAgICAgICAgbXV0YXRlKGF0ZXMgPSBzaW0uY2xzbS5hdGVzKHVubmVzdChjbHNtLmRhdGEpKSlcblxuYGBgIn0= -->
+<pre class="r"><code>dt &lt;- clsm
+    n &lt;- 5
+    set.seed(232354)
+
+    # creates a nested table of clsm data, one row per sim    
+    dt &lt;- dt %&gt;% 
+        select(success, starts_with(&quot;views&quot;))
+    
+    sims &lt;- seq(1,n,1) %&gt;% 
+        tibble() %&gt;% 
+        set_names(nm = &quot;sim.id&quot;)
+    
+    sims &lt;- sims %&gt;% 
+        crossing(dt) %&gt;% 
+        nest(-sim.id, .key=&quot;clsm.data&quot;)
+    
+    # runs each sim through the ate calculations
+    res &lt;- sims %&gt;%
+        group_by(sim.id) %&gt;% 
+        mutate(ates = sim.clsm.ates(unnest(clsm.data)))
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gbXV0YXRlX2ltcGwoLmRhdGEsIGRvdHMpIDogXG4gIEV2YWx1YXRpb24gZXJyb3I6IG5vIGFwcGxpY2FibGUgbWV0aG9kIGZvciAndW5uZXN0XycgYXBwbGllZCB0byBhbiBvYmplY3Qgb2YgY2xhc3MgXCJsaXN0XCIuXG4ifQ== -->
+<pre><code>Error in mutate_impl(.data, dots) : 
+  Evaluation error: no applicable method for 'unnest_' applied to an object of class &quot;list&quot;.</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJvYmxlbSBTZXQgMiIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKCmBgYHtyfQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShkYXRhLnRhYmxlKQpsaWJyYXJ5KGFzc2VydHRoYXQpCmBgYAoKCiMgMS4gRkUgRXhjZXJjaXNlIDMuNgoKVGhlIENsaW5naW5nc21pdGgsIEtod2FqYSwgYW5kIEtyZW1lciBzdHVkeSBkaXNjdXNzZWQgaW4gc2VjdGlvbiAzLjUgbWF5IGJlIGJlIHVzZWQgdG8gdGVzdCB0aGUgc2hhcnAgbnVsbCBoeXBvdGhlc2lzIHRoYXQgd2lubmluZyB0aGUgdmlzYSBsb3R0ZXJ5IGZvciB0aGUgcGlsZ3JpbWFnZSB0byBNZWNjYSBoYWQgbm8gZWZmZWN0IG9uIHRoZSB2aWV3cyBvZiBQYWtpc3RhbmkgTXVzbGltcyB0b3dhcmQgcGVvcGxlIGZyb20gb3RoZXIgY291bnRyaWVzLiBBc3N1bWUgdGhhdCB0aGUgUGFraXN0YW5pIGF1dGhvcml0aWVzIGFzc2lnbmVkIHZpc2FzIHVzaW5nIGNvbXBsZXRlIHJhbmRvbSBhc3NpZ25tZW50LgoKCmBgYHtyfQojIGhlbHBlciBmdW5jdGlvbiB0byBsb2FkIGRhdGEKbG9hZC5jbHNtIDwtIGZ1bmN0aW9uIChmKSB7CiAgICBwdGggPC0gImRhdGEvcmF3L3BzMi8iCiAgICBmcHRoIDwtIHBhc3RlKHB0aCxmLHNlcD0iIikKICAgIGR0IDwtIHJlYWRfY3N2KGZwdGgpCiAgICAKICAgICMgYWRkIGEgcm93aWQgdG8gaGVscCB1bmlxdWVseSBpZGVudGlmeSBlYWNoIHJlc3BvbmRlbnQKICAgIGR0IDwtIGR0ICU+JSByb3dpZF90b19jb2x1bW4oIklEIikKICAgIAogICAgcmV0dXJuKGR0KSAgIAp9CmNsc20gPC0gbG9hZC5jbHNtKCJDbGluZ2luZ3NtaXRoLjIwMDkuY3N2IikKCgpgYGAKCkVhY2ggcm93IG9mIGRhdGEgcmVwcmVzZW50cyBhIHNpbmdsZSByZXNwb25kZW50LiBUaGUgdmlld194eXogZmllbGRzIGFyZSB0aGUgY2hhbmdlcyBpbiB0aGUgdmlld3Mgb2YgdGhlIHJlc3BvbmRlbnQgdG93YXJkcyBwZW9wbGVzIGZyb20gb3RoZXIgY291bnRyaWVzLgoKYGBge3J9CmNsc20gJT4lIGhlYWQoKQoKIyBjaGVja3MgdGhhdCB3ZSBsb2FkZWQgdGhlIHJpZ2h0IGNzdgphc3NlcnRfdGhhdChjbHNtICU+JSBjb3VudCgpID09IDk1OCkKCiMgY2hlY2tzIHRoYXQgdGhlIHZpZXdzIGNvbHVtbnMgaXMgdGhlIHJvd1N1bSBvZiB0aGUgb3RoZXIgdmlld3MgY29sdW1ucwp0ZW1wIDwtIGNsc20gJT4lIAogICAgICAgICAgICBtdXRhdGUoY2hlY2sgPSByb3dTdW1zKHNlbGVjdChjbHNtLCBzdGFydHNfd2l0aCgidmlld3NfIikpKSkgJT4lIAogICAgICAgICAgICBzZWxlY3QoSUQsIHZpZXdzLCBjaGVjaykgJT4lCiAgICAgICAgICAgIGZpbHRlcih2aWV3cyAhPSBjaGVjaykgJT4lIAogICAgICAgICAgICBjb3VudCgpCmFzc2VydF90aGF0KAogICAgdGVtcCA9PSAwCikKCmBgYAoKCiMjIDEuYS4KCkNvbmR1Y3QgMTAsMDAwIHNpbXVsYXRlZCByYW5kb20gYXNzaWdubWVudHMgdW5kZXIgdGhlIHNoYXJwIG51bGwgaHlwb3RoZXNpcwoKVW5kZXIgc2hhcnAgbnVsbCBoeXBvdGhlc2lzLCB3ZSBjYW4gYXNzdW1lIHRoYXQgdGhlIGFzc2lnbm1lbnQgdG8gdHJlYXRtZW50IGhhcyB6ZXJvIHRyZWF0bWVudCBlZmZlY3Qgb24gYW55IG9mIHRoZSB1bml0cyBvZiB0cmVhdG1lbnQuIFNvLCB3ZSBkb24ndCBoYXZlIHRvIGNoYW5nZSB0aGUgdmFsdWVzIG9mIHRoZSB2aWV3cyBpbiBlaXRoZXIgdGhlIHBvdGVudGlhbCBvdXRjb21lIHRvIHRyZWF0bWVudCwgRD09MSwgb3IgdGhlIHBvdGVudGlhbCBvdXRjb21lIHRvIGNvbnRyb2wsIEQ9PTAuCgpXZSBhcmUgdXNpbmcgc2ltcGxlIHJhbmRvbSBhc3NpZ25tZW50LCBzbyBiYXNpY2FsbHkgZmxpcHBpbmcgYSBmYWlyIGNvaW4gdG8gZGV0ZXJtaW5lIGlmIGEgcmVzcG9uZGVudCBpcyBhc3NpZ25lZCB0byB0cmVhdG1lbnQgKGdvdCB2aXNhKSBvciBjb250cm9sIChkaWQgbm90IGdldCB2aXNhKS4KCjwhLS0gV2UgYXJlIGFsc28ganVzdCB1c2luZyB0aGUgInZpZXdzIiB2YXJpYWJsZSwgaW5zdGVhZCBvZiBjaGVja2luZyBlYWNoLCBzaW5jZSBpdCByZXByZXNlbnRzIHRoZSB0b3RhbCBjaGFuZ2UgaW4gZWFjaCByZXNwb25kZW50J3Mgdmlld3MgdG93YXJkIHBlb3BsZSBmcm9tIG90aGVyIGNvdW50cmllcy4gLS0+CgoKYGBge3J9CiMgaGVscGVyIGZ1bmN0aW9uIHRoYXQsIHdoZW4gZ2l2ZW4gdGhlIGNsc20gZGF0YSwgcnVucyBhIHNpbmdsZSBleHBlcmltZW50CnNldC5zZWVkKDIzMjM1NCkKCnNpbS5leHBlcmltZW50IDwtIGZ1bmN0aW9uIChkdCkgewogICAgZHQgPC0gY2xzbQogICAgZHQgPC0gZHQgJT4lIAogICAgICAgIHNlbGVjdChJRCwgc3RhcnRzX3dpdGgoInZpZXciKSkgJT4lIAogICAgICAgIG11dGF0ZShEID0gcmJpbm9tKG5yb3coZHQpLDEsLjUpKQogICAgcmV0dXJuKGR0KQp9CnRlbXAgPC0gc2ltLmV4cGVyaW1lbnQoY2xzbSkKYGBgCgo=</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUHJvYmxlbSBTZXQgMiIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKCmBgYHtyfQpsaWJyYXJ5KHRpZHl2ZXJzZSkKbGlicmFyeShkYXRhLnRhYmxlKQpsaWJyYXJ5KGFzc2VydHRoYXQpCmBgYAoKCiMgMS4gRkUgRXhjZXJjaXNlIDMuNgoKVGhlIENsaW5naW5nc21pdGgsIEtod2FqYSwgYW5kIEtyZW1lciBzdHVkeSBkaXNjdXNzZWQgaW4gc2VjdGlvbiAzLjUgbWF5IGJlIGJlIHVzZWQgdG8gdGVzdCB0aGUgc2hhcnAgbnVsbCBoeXBvdGhlc2lzIHRoYXQgd2lubmluZyB0aGUgdmlzYSBsb3R0ZXJ5IGZvciB0aGUgcGlsZ3JpbWFnZSB0byBNZWNjYSBoYWQgbm8gZWZmZWN0IG9uIHRoZSB2aWV3cyBvZiBQYWtpc3RhbmkgTXVzbGltcyB0b3dhcmQgcGVvcGxlIGZyb20gb3RoZXIgY291bnRyaWVzLiBBc3N1bWUgdGhhdCB0aGUgUGFraXN0YW5pIGF1dGhvcml0aWVzIGFzc2lnbmVkIHZpc2FzIHVzaW5nIGNvbXBsZXRlIHJhbmRvbSBhc3NpZ25tZW50LgoKCmBgYHtyfQojIGhlbHBlciBmdW5jdGlvbiB0byBsb2FkIGRhdGEKbG9hZC5jbHNtIDwtIGZ1bmN0aW9uIChmKSB7CiAgICBwdGggPC0gImRhdGEvcmF3L3BzMi8iCiAgICBmcHRoIDwtIHBhc3RlKHB0aCxmLHNlcD0iIikKICAgIGR0IDwtIHJlYWRfY3N2KGZwdGgpCiAgICAKICAgICMgYWRkIGEgcm93aWQgdG8gaGVscCB1bmlxdWVseSBpZGVudGlmeSBlYWNoIHJlc3BvbmRlbnQKICAgIGR0IDwtIGR0ICU+JSByb3dpZF90b19jb2x1bW4oIklEIikKICAgIAogICAgcmV0dXJuKGR0KSAgIAp9CmNsc20gPC0gbG9hZC5jbHNtKCJDbGluZ2luZ3NtaXRoLjIwMDkuY3N2IikKCgpgYGAKCkVhY2ggcm93IG9mIGRhdGEgcmVwcmVzZW50cyBhIHNpbmdsZSByZXNwb25kZW50LiBUaGUgdmlld194eXogZmllbGRzIGFyZSB0aGUgY2hhbmdlcyBpbiB0aGUgdmlld3Mgb2YgdGhlIHJlc3BvbmRlbnQgdG93YXJkcyBwZW9wbGVzIGZyb20gb3RoZXIgY291bnRyaWVzLgoKYGBge3J9CmNsc20gJT4lIGhlYWQoKQoKIyBjaGVja3MgdGhhdCB3ZSBsb2FkZWQgdGhlIHJpZ2h0IGNzdgphc3NlcnRfdGhhdChjbHNtICU+JSBjb3VudCgpID09IDk1OCkKCiMgY2hlY2tzIHRoYXQgdGhlIHZpZXdzIGNvbHVtbnMgaXMgdGhlIHJvd1N1bSBvZiB0aGUgb3RoZXIgdmlld3MgY29sdW1ucwp0ZW1wIDwtIGNsc20gJT4lIAogICAgICAgICAgICBtdXRhdGUoY2hlY2sgPSByb3dTdW1zKHNlbGVjdChjbHNtLCBzdGFydHNfd2l0aCgidmlld3NfIikpKSkgJT4lIAogICAgICAgICAgICBzZWxlY3QoSUQsIHZpZXdzLCBjaGVjaykgJT4lCiAgICAgICAgICAgIGZpbHRlcih2aWV3cyAhPSBjaGVjaykgJT4lIAogICAgICAgICAgICBjb3VudCgpCmFzc2VydF90aGF0KAogICAgdGVtcCA9PSAwCikKCmBgYAoKCiMjIDEuYS4KCkNvbmR1Y3QgMTAsMDAwIHNpbXVsYXRlZCByYW5kb20gYXNzaWdubWVudHMgdW5kZXIgdGhlIHNoYXJwIG51bGwgaHlwb3RoZXNpcwoKVW5kZXIgc2hhcnAgbnVsbCBoeXBvdGhlc2lzLCB3ZSBjYW4gYXNzdW1lIHRoYXQgdGhlIGFzc2lnbm1lbnQgdG8gdHJlYXRtZW50IGhhcyB6ZXJvIHRyZWF0bWVudCBlZmZlY3Qgb24gYW55IG9mIHRoZSB1bml0cyBvZiB0cmVhdG1lbnQuIFNvLCB3ZSBkb24ndCBoYXZlIHRvIGNoYW5nZSB0aGUgdmFsdWVzIG9mIHRoZSB2aWV3cyBpbiBlaXRoZXIgdGhlIHBvdGVudGlhbCBvdXRjb21lIHRvIHRyZWF0bWVudCwgRD09MSwgb3IgdGhlIHBvdGVudGlhbCBvdXRjb21lIHRvIGNvbnRyb2wsIEQ9PTAuCgpXZSBhcmUgdXNpbmcgc2ltcGxlIHJhbmRvbSBhc3NpZ25tZW50LCBzbyBiYXNpY2FsbHkgZmxpcHBpbmcgYSBmYWlyIGNvaW4gdG8gZGV0ZXJtaW5lIGlmIGEgcmVzcG9uZGVudCBpcyBhc3NpZ25lZCB0byB0cmVhdG1lbnQgKGdvdCB2aXNhKSBvciBjb250cm9sIChkaWQgbm90IGdldCB2aXNhKS4KCgoKYGBge3J9CiMgd2hlbiBnaXZlbiB0aGUgY2xzbSBkYXRhLCBjYWxjdWxhdGVzIHRoZSBBVEUgZm9yIGV2ZXJ5IHZpZXcKY2FsYy5jbHNtLmF0ZXMgPC0gZnVuY3Rpb24gKGR0KSB7CiAgICBkdCA8LSBkdCAlPiUgCiAgICAgICAgc2VsZWN0KHN1Y2Nlc3MsIHN0YXJ0c193aXRoKCJ2aWV3IikpICU+JSAKICAgICAgICBncm91cF9ieShzdWNjZXNzKSAlPiUgCiAgICAgICAgc3VtbWFyaXplX2FsbChmdW5zKG1lYW4pKQoKICAgIGR0IDwtIGR0ICU+JSAKICAgICAgICBnYXRoZXIoc3RhcnRzX3dpdGgoInZpZXdzIiksIGtleSA9ICJ2dyIsIHZhbHVlID0gInZhbCIpICU+JSAKICAgICAgICBzcHJlYWQoa2V5ID0gc3VjY2VzcywgdmFsdWUgPSB2YWwpCiAgICAKICAgIGR0IDwtIGR0ICU+JSAKICAgICAgICBtdXRhdGUoYXRlID0gYDFgIC0gYDBgKSAlPiUgCiAgICAgICAgc2VsZWN0KHZ3LCBhdGUpCiAgICAKICAgIHJldHVybihkdCkKfQpjbHNtLmF0ZXMgPC0gY2FsYy5jbHNtLmF0ZXMoY2xzbSkKYGBgCgoKYGBge3J9CiMgZ2l2ZW4gdGhlIGNsc20gZGF0YSwgcnVucyBhIHNpbmdsZSBleHBlcmltZW50CnNpbS5jbHNtLmF0ZXMgPC0gZnVuY3Rpb24gKGR0KSB7CiAgICAjIHNpbXBsZSByYW5kb20gYXNzaWdubWVudCB0byB0cmVhdG1lbnQgb3IgY29udHJvbAogICAgIyAuLi4gcmV1c2VzIHRoZSBzdWNjZXNzIHZhcmlhYmxlIGJlY2F1c2UgCiAgICAjIC4uLiAuLi4gdGhhdCBpcyB0aGUgdHJlYXRtZW50IGluZGljYXRvciB2YXJpYWJsZSBleHBlY3RlZCBieSB0aGUgY2xzbS5hdGVzKCkgZnVuY3Rpb24KICAgIGR0IDwtIGR0ICU+JSAKICAgICAgICBzZWxlY3Qoc3RhcnRzX3dpdGgoInZpZXciKSkgJT4lIAogICAgICAgIG11dGF0ZShzdWNjZXNzID0gcmJpbm9tKG5yb3coZHQpLDEsLjUpKQogICAgCiAgICAjIGZvciBldmVyeSB2aWV3IHZhcmlhYmxlLCBjYWxjdWxhdGVzIEFURQogICAgYXRlcyA8LSBjYWxjLmNsc20uYXRlcyhkdCkKICAgIAogICAgcmV0dXJuKGF0ZXMpCn0KIyBzZXQuc2VlZCgyMzIzNTQpCiMgdGVtcCA8LSBzaW0uY2xzbS5hdGVzKGNsc20pCgojIGdpdmVuIHRoZSBjbHNtIGRhdGEsIHJ1bnMgbiBudW1iZXIgb2Ygc2ltdWxhdGlvbnMKc2ltLm4uY2xzbS5hdGVzIDwtIGZ1bmN0aW9uKGR0LCBuKSB7CiAgICBkdCA8LSBjbHNtCiAgICBuIDwtIDUKICAgIHNldC5zZWVkKDIzMjM1NCkKCiAgICAjIGNyZWF0ZXMgYSBuZXN0ZWQgdGFibGUgb2YgY2xzbSBkYXRhLCBvbmUgcm93IHBlciBzaW0gICAgCiAgICBkdCA8LSBkdCAlPiUgCiAgICAgICAgc2VsZWN0KHN1Y2Nlc3MsIHN0YXJ0c193aXRoKCJ2aWV3cyIpKQogICAgCiAgICBzaW1zIDwtIHNlcSgxLG4sMSkgJT4lIAogICAgICAgIHRpYmJsZSgpICU+JSAKICAgICAgICBzZXRfbmFtZXMobm0gPSAic2ltLmlkIikKICAgIAogICAgc2ltcyA8LSBzaW1zICU+JSAKICAgICAgICBjcm9zc2luZyhkdCkgJT4lIAogICAgICAgIG5lc3QoLXNpbS5pZCwgLmtleT0iY2xzbS5kYXRhIikKICAgIAogICAgIyBydW5zIGVhY2ggc2ltIHRocm91Z2ggdGhlIGF0ZSBjYWxjdWxhdGlvbnMKICAgIHJlcyA8LSBzaW1zICU+JQogICAgICAgIGdyb3VwX2J5KHNpbS5pZCkgJT4lIAogICAgICAgIG11dGF0ZShhdGVzID0gc2ltLmNsc20uYXRlcyh1bm5lc3QoY2xzbS5kYXRhKSkpCiAgICAKICAgICMgc2ltcyA8LSBzaW1zICU+JSAKICAgICMgICAgIGNyb3NzaW5nKGR0KSAlPiUgCiAgICAjICAgICBuZXN0KC1zaW0uaWQsIC5rZXk9ImNsc20uZGF0YSIpCiAgICAKICAgICMgcmVzIDwtIHNpbXMgJT4lIAogICAgIyAgICAgZmlsdGVyKHNpbS5pZD09MSkgJT4lIAogICAgIyAgICAgc2VsZWN0KGNsc20uZGF0YSkKICAgIAogICAgIyAjIHJ1bnMgZWFjaCBzaW0gdGhyb3VnaCB0aGUgYXRlIGNhbGN1bGF0aW9ucwogICAgIyByZXMgPC0gc2ltcyAlPiUKICAgICMgICAgIGdyb3VwX2J5KHNpbS5pZCkgJT4lIAogICAgIyAgICAgbXV0YXRlKGF0ZXMgPSBzaW0uY2xzbS5hdGVzKGNsc20uZGF0YSkpCiAgICAKICAgIAogICAgcmV0dXJuKHJlcykKfQp0ZW1wMiA8LSBzaW0ubi5jbHNtLmF0ZXMoY2xzbSwgNSkKYGBgCgo=</div>
 
 
 

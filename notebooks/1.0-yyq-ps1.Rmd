@@ -62,20 +62,87 @@ Under sharp null hypothesis, we can assume that the assignment to treatment has 
 
 We are using simple random assignment, so basically flipping a fair coin to determine if a respondent is assigned to treatment (got visa) or control (did not get visa).
 
-<!-- We are also just using the "views" variable, instead of checking each, since it represents the total change in each respondent's views toward people from other countries. -->
 
 
 ```{r}
-# helper function that, when given the clsm data, runs a single experiment
-set.seed(232354)
-
-sim.experiment <- function (dt) {
-    dt <- clsm
+# when given the clsm data, calculates the ATE for every view
+calc.clsm.ates <- function (dt) {
     dt <- dt %>% 
-        select(ID, starts_with("view")) %>% 
-        mutate(D = rbinom(nrow(dt),1,.5))
+        select(success, starts_with("view")) %>% 
+        group_by(success) %>% 
+        summarize_all(funs(mean))
+
+    dt <- dt %>% 
+        gather(starts_with("views"), key = "vw", value = "val") %>% 
+        spread(key = success, value = val)
+    
+    dt <- dt %>% 
+        mutate(ate = `1` - `0`) %>% 
+        select(vw, ate)
+    
     return(dt)
 }
-temp <- sim.experiment(clsm)
+clsm.ates <- calc.clsm.ates(clsm)
+```
+
+
+```{r}
+# given the clsm data, runs a single experiment
+sim.clsm.ates <- function (dt) {
+    # simple random assignment to treatment or control
+    # ... reuses the success variable because 
+    # ... ... that is the treatment indicator variable expected by the clsm.ates() function
+    dt <- dt %>% 
+        select(starts_with("view")) %>% 
+        mutate(success = rbinom(nrow(dt),1,.5))
+    
+    # for every view variable, calculates ATE
+    ates <- calc.clsm.ates(dt)
+    
+    return(ates)
+}
+# set.seed(232354)
+# temp <- sim.clsm.ates(clsm)
+
+# given the clsm data, runs n number of simulations
+sim.n.clsm.ates <- function(dt, n) {
+    dt <- clsm
+    n <- 5
+    set.seed(232354)
+
+    # creates a nested table of clsm data, one row per sim    
+    dt <- dt %>% 
+        select(success, starts_with("views"))
+    
+    sims <- seq(1,n,1) %>% 
+        tibble() %>% 
+        set_names(nm = "sim.id")
+    
+    sims <- sims %>% 
+        crossing(dt) %>% 
+        nest(-sim.id, .key="clsm.data")
+    
+    # runs each sim through the ate calculations
+    res <- sims %>%
+        group_by(sim.id) %>% 
+        mutate(ates = sim.clsm.ates(unnest(clsm.data)))
+    
+    # sims <- sims %>% 
+    #     crossing(dt) %>% 
+    #     nest(-sim.id, .key="clsm.data")
+    
+    # res <- sims %>% 
+    #     filter(sim.id==1) %>% 
+    #     select(clsm.data)
+    
+    # # runs each sim through the ate calculations
+    # res <- sims %>%
+    #     group_by(sim.id) %>% 
+    #     mutate(ates = sim.clsm.ates(clsm.data))
+    
+    
+    return(res)
+}
+temp2 <- sim.n.clsm.ates(clsm, 5)
 ```
 
