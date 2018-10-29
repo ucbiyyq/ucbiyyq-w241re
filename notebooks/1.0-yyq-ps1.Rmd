@@ -18,7 +18,7 @@ The Clingingsmith, Khwaja, and Kremer study discussed in section 3.5 may be be u
 
 ```{r}
 # helper function to load data
-load.clsm <- function (f) {
+q01.load.clsm <- function (f) {
     pth <- "data/raw/ps2/"
     fpth <- paste(pth,f,sep="")
     dt <- read_csv(fpth)
@@ -28,7 +28,7 @@ load.clsm <- function (f) {
     
     return(dt)   
 }
-clsm <- load.clsm("Clingingsmith.2009.csv")
+q01.clsm <- q01.load.clsm("Clingingsmith.2009.csv")
 
 
 ```
@@ -36,21 +36,18 @@ clsm <- load.clsm("Clingingsmith.2009.csv")
 Each row of data represents a single respondent. The view_xyz fields are the changes in the views of the respondent towards peoples from other countries.
 
 ```{r}
-clsm %>% head()
+q01.clsm %>% head()
 
 # checks that we loaded the right csv
-assert_that(clsm %>% count() == 958)
+assert_that(q01.clsm %>% count() == 958)
 
 # checks that the views columns is the rowSum of the other views columns
-temp <- clsm %>% 
-            mutate(check = rowSums(select(clsm, starts_with("views_")))) %>% 
-            select(ID, views, check) %>%
-            filter(views != check) %>% 
-            count()
+temp <- q01.clsm %>% 
+    select(starts_with("views_")) %>% 
+    rowSums()
 assert_that(
-    temp == 0
+    (temp == q01.clsm$views) %>% unique() == TRUE
 )
-
 ```
 
 
@@ -62,11 +59,12 @@ Under sharp null hypothesis, we can assume that the assignment to treatment has 
 
 We are using simple random assignment, so basically flipping a fair coin to determine if a respondent is assigned to treatment (got visa) or control (did not get visa).
 
+Note, we are calculating the ATE for every view. 
 
 
 ```{r}
 # when given the clsm data, calculates the ATE for every view
-calc.clsm.ates <- function (dt) {
+q01.calc.ates <- function (dt) {
     dt <- dt %>% 
         select(success, starts_with("view")) %>% 
         group_by(success) %>% 
@@ -82,32 +80,25 @@ calc.clsm.ates <- function (dt) {
     
     return(dt)
 }
-clsm.ates <- calc.clsm.ates(clsm)
+q01.clsm.ates <- q01.calc.ates(q01.clsm)
 ```
 
 
 ```{r}
-# given the clsm data, runs a single experiment
-sim.clsm.ates <- function (dt) {
-    # simple random assignment to treatment or control
-    # ... reuses the success variable because 
-    # ... ... that is the treatment indicator variable expected by the clsm.ates() function
-    dt <- dt %>% 
-        select(starts_with("view")) %>% 
-        mutate(success = rbinom(nrow(dt),1,.5))
-    
-    # for every view variable, calculates ATE
-    ates <- calc.clsm.ates(dt)
-    
-    return(ates)
-}
-# set.seed(232354)
-# temp <- sim.clsm.ates(clsm)
-
 # given the clsm data, runs n number of simulations
-sim.n.clsm.ates <- function(dt, n) {
-    dt <- clsm
-    n <- 5
+q01.sim.n <- function(dt, n) {
+    
+    # helper function to sim assignment to treatment by simple random assignment
+    simpl.rand.assign <- function (xt) {
+        # simple random assignment to treatment or control
+        # ... reuses the success variable because 
+        # ... ... that is the treatment indicator variable expected by the clsm.ates() function
+        xt <- xt %>% 
+            select(starts_with("view")) %>% 
+            mutate(success = rbinom(nrow(xt),1,.5))
+        return(xt)
+    }
+    
     set.seed(232354)
 
     # creates a nested table of clsm data, one row per sim    
@@ -119,30 +110,70 @@ sim.n.clsm.ates <- function(dt, n) {
         set_names(nm = "sim.id")
     
     sims <- sims %>% 
-        crossing(dt) %>% 
-        nest(-sim.id, .key="clsm.data")
-    
-    # runs each sim through the ate calculations
-    res <- sims %>%
+        crossing(dt) %>%
         group_by(sim.id) %>% 
-        mutate(ates = sim.clsm.ates(unnest(clsm.data)))
+        nest(.key="sim.data")
     
-    # sims <- sims %>% 
-    #     crossing(dt) %>% 
-    #     nest(-sim.id, .key="clsm.data")
+    # runs each sim data through simple random assignments
+    sims <- sims %>% 
+        mutate(sim.data = map(sim.data, simpl.rand.assign))
     
-    # res <- sims %>% 
-    #     filter(sim.id==1) %>% 
-    #     select(clsm.data)
+    # runs each sim data through the ate calculations
+    sims <- sims %>%
+        mutate(sim.ates = map(sim.data, q01.calc.ates))
     
-    # # runs each sim through the ate calculations
-    # res <- sims %>%
-    #     group_by(sim.id) %>% 
-    #     mutate(ates = sim.clsm.ates(clsm.data))
+    return(sims)
+}
+# q01.sims <- q01.sim.n(q01.clsm, 1000)
+```
+
+
+
+```{r}
+# given simulation results, produces an unnested table of ATEs for each view and sim.id
+# ... useful for future calculations
+q01.simpl <- function (dt) {
+    res <- dt %>% 
+        select(sim.id, sim.ates) %>% 
+        unnest()
+    return(res)
+}
+# q01.sim.ates <- q01.simpl(q01.sims)
+q01.sim.ates <- q01.clsm %>% q01.sim.n(1000) %>% q01.simpl()
+```
+
+
+```{r}
+# checks that each simulation has the same number of ATEs as the actual ATEs
+assert_that(
+    q01.sim.ates %>% count(sim.id) %>% .$n %>% unique() == q01.clsm.ates %>% nrow()
+)
+```
+
+
+
+
+## 1.b. 
+
+How many of the simulated random assignments generate an estimated ATE that is at least as large as
+the actual estimate of the ATE?
+
+Note, we are still calculating this for all ATEs of each view
+
+```{r}
+q01.count.gte <- function (s.ates, c.ates) {
+    c.ates <- q01.clsm.ates
+    s.ates <- q01.sim.ates
     
+    # joins the actual ATEs to the simulated ATEs, then counts gte
+    res <- inner_join(c.ates, s.ates, by="vw", suffix = c(".clsm", ".sim")) %>%
+        mutate( gte = (ate.sim >= ate.clsm) ) %>% 
+        count(vw, gte) %>% 
+        spread(key = gte, value = n, fill = 0) %>% 
+        rename("sim.gte.clsm" = `TRUE`, "sim.lt.clsm" = `FALSE`)
     
     return(res)
 }
-temp2 <- sim.n.clsm.ates(clsm, 5)
+temp <- q01.sim.ates %>% q01.count.gte(q01.clsm.ates)
 ```
 
