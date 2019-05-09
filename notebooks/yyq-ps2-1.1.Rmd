@@ -32,7 +32,17 @@ Each row of data represents a single respondent. The view_xyz fields are the cha
 
 ```{r}
 q01$data %>% head()
+```
 
+```{r}
+q01$data %>% str()
+```
+
+```{r}
+q01$data %>% summary()
+```
+
+```{r}
 # checks that we loaded the right csv
 assert_that(q01$data %>% nrow() == 958)
 
@@ -43,6 +53,19 @@ temp <- q01$data %>%
 assert_that(
     (temp == q01$data$views) %>% unique() == TRUE
 )
+```
+
+```{r}
+# quick viz to see if there's any large diff
+q01$data %>% 
+    select(-ID) %>% 
+    gather(-success, key = "vw", value = "value") %>%
+    mutate(success = as_factor(success)) %>% 
+    ggplot(aes(x = value, fill = success)) +
+    geom_histogram(binwidth = 1, alpha = 0.5, position = "identity") +
+    facet_wrap(vars(vw)) +
+    labs(title = "Distribution of views, if visa success, by target country", subtitle = "doesn't seem like there's a huge difference at first glance")
+
 ```
 
 
@@ -120,7 +143,7 @@ q01_sim_n <- function(dt, n) {
 
 
 
-```{r run_simulations}
+```{r q01_run_sims}
 # unnests table of ATEs for each view and sim_id
 q01$sim_ates <- q01$data %>% 
     q01_sim_n(1000) %>% 
@@ -152,7 +175,7 @@ q01$res <- inner_join(q01$ates, q01$sim_ates, by = "vw", suffix = c("_actual", "
 ```
 
 
-```{r plots_ates}
+```{r}
 # visual aid to see what the sampling distribution of the sims are like, vs the actual ATE
 q01$res %>% 
     ggplot(mapping = aes(x = ate_sim)) +
@@ -238,12 +261,210 @@ What is the implied two-tailed p-value?
 
 Naturally occurring experiments sometimes involve what is, in effect, block random assignment. For example, Titunik studies the effect of lotteries that determine whether state senators in TX and AR serve two-year or four-year terms in the aftermath of decennial redistricting. These lotteries are conducted within each state, and so there are effectively two distinct experiments on the effects of term length. An interesting outcome variable is the number of bills (legislative proposals) that each senator introduces during a legislative session. The table below lists the number of bills introduced by senators in both states during 2003.
 
+If you're interested, or would like more clarification, the published version of the paper is in the repository. 
+
+```{r}
+# for scope control
+q02 <- list()
+
+library(foreign)
+q02$data <- foreign::read.dta(here::here("data", "raw", "ps2", "Titiunik.2010.dta"))
+q02$data %>% head()
+```
+
+```{r}
+q02$data %>% str()
+```
+
+```{r}
+q02$data %>% summary()
+```
+
+```{r}
+# checks how many records belong to each state
+q02$data %>% count(texas0_arkansas1)
+```
+
+```{r}
+# checks how many records belong to each term
+q02$data %>% count(term2year)
+```
+
+```{r}
+# checks how many records belong to each term and state
+q02$data %>% count(term2year, texas0_arkansas1)
+```
+
+```{r}
+# checks distribution of number of bills
+q02$data %>% 
+    ggplot(aes(bills_introduced)) +
+    geom_histogram(binwidth = 10) +
+    labs(title = "distribution of number of bills is right-skewed")
+```
 
 
 ```{r}
+# checks distribution of number of bills by term
+q02$data %>% 
+    ggplot(aes(bills_introduced)) +
+    geom_histogram(binwidth = 10) +
+    facet_wrap(vars(term2year), labeller = label_both) +
+    labs(title = "looks about the same")
+```
 
+
+```{r}
+# checks distribution of number of bills by state
+q02$data %>% 
+    ggplot(aes(bills_introduced)) +
+    geom_histogram(binwidth = 10) +
+    facet_wrap(vars(texas0_arkansas1), labeller = label_both) +
+    labs(title = "Arkansas distribution is quite different from Texas")
+```
+
+
+```{r}
+# checks distribution of number of bills by facets
+q02$data %>% 
+    mutate(term2year = as_factor(term2year)) %>% 
+    ggplot(aes(bills_introduced, fill = term2year)) +
+    geom_histogram(binwidth = 10, alpha = 0.5, position = "identity") +
+    facet_wrap(vars(texas0_arkansas1), labeller = label_both) +
+    labs(title = "Number of bills introduced by state, if term2year or not")
+```
+
+
+```{r}
+# helper function to output multiple simulations
+# assumes sharp-null hypothesis, that term2year makes no difference
+q02_sim_n <- function(data, n = 10) {
+    # helper function to output a single simulation run
+    # uses simple random assignment with fair coin flip
+    # calculates the ATE for each state
+    calc_sim <- function(data) {
+        res <- data %>% 
+            mutate(term2year = rbinom(nrow(.), 1, .5)) %>% 
+            group_by(texas0_arkansas1, term2year) %>% 
+            summarize(bills_introduced = mean(bills_introduced)) %>% 
+            ungroup() %>% 
+            spread(bills_introduced, key = term2year) %>% 
+            select(texas0_arkansas1, `1`, `0`) %>% 
+            mutate(ate = floor(`1` - `0`)) %>% 
+            select(texas0_arkansas1, ate)
+            # spread(texas0_arkansas1, value = ate) %>% 
+        return(res)
+    }
+    
+    # runs n simulations of the ate
+    sim_res <- list()
+    for (i in 1:n) {
+        sim_i <- calc_sim(data)
+        sim_i$sim_id <- i
+        sim_res[[i]] <- sim_i
+    }
+    
+    # returns a dataframe
+    sim_res <- sim_res %>% 
+        bind_rows() %>%
+        select(sim_id, texas0_arkansas1, ate) %>% 
+        arrange(sim_id, texas0_arkansas1)
+    return(sim_res)
+}
+# temp <- q02$data %>% q02_sim_n(n = 10)
+```
+
+```{r q02_rum_sims}
+q02$sims <- q02$data %>% q02_sim_n(n = 1000)
+```
+
+```{r}
+q02$sims %>% 
+    mutate(texas0_arkansas1 = as_factor(texas0_arkansas1)) %>% 
+    ggplot(aes(x = ate, fill = texas0_arkansas1)) +
+    geom_histogram(binwidth = 5, position = "identity", alpha = 0.5) +
+    labs(title = "distribution of ATEs based on simulations assuming sharp null")
+```
+
+```{r}
+q02$sims %>% 
+    spread(key = "texas0_arkansas1", value = "ate") %>% 
+    summary()
+```
+
+
+## 2.a. 
+
+For each state, estimate the effect of having a two-year term on the number of bills introduced. 
+
+**for Texas, ATE of having a two-year term is about -17. For Arkansas, ATE is about -11. Assuming we're dealing with whole bills.**
+
+
+```{r}
+q02$data %>% 
+    group_by(term2year, texas0_arkansas1) %>% 
+    summarize(bills_introduced = mean(bills_introduced)) %>% 
+    ungroup() %>% 
+    spread(bills_introduced, key = term2year) %>% 
+    select(texas0_arkansas1, `1`, `0`) %>% 
+    mutate(ate = floor(`1` - `0`))
+    
+```
+
+
+## 2.b.
+
+For each state, estimate the standard error of the estimated ATE.
+
+Note, we can't do this empirically, so we have to use the following formulas.
+
+
+
+```{r}
+q02$data
+```
+
+
+
+```{r}
+q02_sim_n <- function(data, n = 10) {
+    calc_sim <- function() {
+        
+    }
+}
+q02$data %>% q02_sim_n()
+```
+
+## 2.c.
+
+Use equation (3.10) to estimate the overall ATE for both states combined. 
+
+```{r}
 
 ```
 
+## 2.d.
+
+Explain why, in this study, simply pooling the data for the two states and comparing the average number of bills introduced by two-year senators to the average number of bills introduced by four-year senators leads to biased estimate of the overall ATE. 
+
+## 2.e.
+
+Insert the estimated standard errors into equation (3.12) to estimate the stand error for the overall ATE. 
+
+```{r}
+
+```
+
+## 2.f.
+
+Use randomization inference to test the sharp null hypothesis that the treatment effect is zero for senators in both states. 
+
+```{r}
+
+``` 
+
+## 2.g.
+
+**IN Addition:** Plot histograms for both the treatment and control groups in each state (for 4 histograms in total).
 
 
